@@ -8,7 +8,7 @@ const logic = async (
   args: z.infer<typeof zOauthRequest>
 ): Promise<z.infer<typeof zOauthResponse>> => {
   const { data } = await axios
-    .post<{ access_token: string; team: { name: string } }>(
+    .post<{ access_token: string; team: { name: string, id: string } }>(
       "https://slack.com/api/oauth.v2.access",
       qs.stringify({
         code: args.code,
@@ -33,7 +33,8 @@ const logic = async (
   const { access_token, team } = data;
   return {
     accessToken: access_token,
-    workspace: team.name,
+    workspace: team.id,
+    label: team.name,
   };
 };
 
