@@ -36,7 +36,7 @@
           "title": "Connect your account",
           "children": "link",
           "props": {
-            "href": "https://slack.com/oauth/v2/authorize?client_id=3795614262006.5126720614164&redirect_uri=https://samepage.network/oauth/slack"
+            "href": "https://slack.com/oauth/v2/authorize?client_id=3795614262006.5126720614164&scope=channels:read,chat:write,users:read,users:read.email&user_scope=chat:write&redirect_uri=https://samepage.network/oauth/slack"
           }
         },
         {
