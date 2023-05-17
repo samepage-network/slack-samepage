@@ -9,6 +9,7 @@ import { z } from "zod";
 import debug from "samepage/utils/debugger";
 import decodeState from "src/util/decodeState";
 import encodeState from "src/util/encodeState";
+import commands from "src/util/commands";
 const log = debug("api:backend");
 
 const zMessage = z.discriminatedUnion("type", [
@@ -35,6 +36,13 @@ const zMessage = z.discriminatedUnion("type", [
     type: z.literal("DECODE_STATE"),
     notebookPageId: z.string(),
     state: zSamePageState,
+  }),
+  z.object({
+    type: z.literal("COMMAND_HANDLER"),
+    notebookUuid: z.string(),
+    args: z.any(), // TODO: zCommandArgs,
+    text: z.string(),
+    workflowContext: z.any(), // TODO: zWorkflowContext,
   }),
 ]);
 
@@ -81,12 +89,19 @@ const logic = async (args: BackendRequest<typeof zMessage>) => {
         const { notebookPageId, state } = data;
         return decodeState(notebookPageId, state, accessToken);
       }
+      case "COMMAND_HANDLER": {
+        const { notebookUuid: _, args, text, workflowContext } = data;
+        const response = await commands[text].handler(args, workflowContext);
+        return { response };
+      }
       default:
         throw new Error(`Unknown type ${data["type"]}`);
     }
   } catch (e) {
     log("error", e);
-    throw new Error(`Backend request ${data.type} failed`, { cause: e });
+    throw new Error(`Backend request ${data.type} failed`, {
+      cause: e as Error,
+    });
   }
 };
 
