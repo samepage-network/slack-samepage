@@ -1,6 +1,6 @@
 {
   "name": "slack-samepage",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Official Slack client into the inter-tool protocol, SamePage.",
   "main": "./dist/index.js",
   "scripts": {
