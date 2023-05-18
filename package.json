@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/samepage-network/slack-samepage#readme",
   "dependencies": {
-    "samepage": "^0.65.5"
+    "samepage": "^0.68.1"
   },
   "samepage": {
     "install": {

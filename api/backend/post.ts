@@ -2,8 +2,10 @@ import createAPIGatewayProxyHandler from "samepage/backend/createAPIGatewayProxy
 import getAccessToken from "samepage/backend/getAccessToken";
 import {
   BackendRequest,
+  zCommandArgs,
   zSamePageSchema,
   zSamePageState,
+  zWorkflowContext,
 } from "samepage/internal/types";
 import { z } from "zod";
 import debug from "samepage/utils/debugger";
@@ -40,9 +42,9 @@ const zMessage = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("COMMAND_HANDLER"),
     notebookUuid: z.string(),
-    args: z.any(), // TODO: zCommandArgs,
+    args: zCommandArgs,
     text: z.string(),
-    workflowContext: z.any(), // TODO: zWorkflowContext,
+    workflowContext: zWorkflowContext,
   }),
 ]);
 
@@ -91,7 +93,10 @@ const logic = async (args: BackendRequest<typeof zMessage>) => {
       }
       case "COMMAND_HANDLER": {
         const { notebookUuid: _, args, text, workflowContext } = data;
-        const response = await commands[text].handler(args, workflowContext);
+        const response = await commands[text].handler(args, {
+          ...workflowContext,
+          accessToken,
+        });
         return { response };
       }
       default:
